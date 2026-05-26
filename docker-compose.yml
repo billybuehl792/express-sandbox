@@ -1,10 +1,29 @@
 services:
   api:
-    container_name: "express-app"
     build: .
     ports:
       - "${PORT}:${PORT}" # machine:container
     env_file:
       - .env
+    depends_on:
+      - db
     volumes:
-      - ./data:/data # machine:container
+      - .:/app
+      - /app/node_modules
+    command: npm run dev
+
+  db:
+    image: postgres:17
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    volumes:
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./postgres/data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
