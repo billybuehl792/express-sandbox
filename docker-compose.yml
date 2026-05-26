@@ -1,0 +1,10 @@
+services:
+  api:
+    container_name: "express-app"
+    build: .
+    ports:
+      - "${PORT}:${PORT}" # machine:container
+    env_file:
+      - .env
+    volumes:
+      - ./data:/data # machine:container
